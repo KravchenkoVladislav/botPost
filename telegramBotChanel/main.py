@@ -24,23 +24,25 @@ def send_post():
     markup = types.InlineKeyboardMarkup()
     button = types.InlineKeyboardButton("Перейти", url="https://t.me/your_username")
     markup.add(button)
-
-    if post['type'] == 'text':
-        bot.send_message(CHANNEL_NAME, post['text'], reply_markup=markup)
-    elif post['type'] == 'image':
-        if len(post['images']) > 1:
-            media = [types.InputMediaPhoto(open(img, 'rb'), caption=(post['text'] if i == 0 else "")) for i, img in enumerate(post['images'])]
-            bot.send_media_group(CHANNEL_NAME, media)
-        else:
-            with open(post['images'][0], 'rb') as photo:
-                bot.send_photo(CHANNEL_NAME, photo, caption=post.get('text', ''), reply_markup=markup)
-    elif post['type'] == 'video':
-        with open(post['video'], 'rb') as video:
-            bot.send_video_note(CHANNEL_NAME, video)
-            bot.send_message(CHANNEL_NAME, "НАПИШИ МНЕ \U0001F44B", reply_markup=markup)
-    elif post['type'] == 'audio':
-        with open(post['audio'], 'rb') as audio:
-            bot.send_audio(CHANNEL_NAME, audio, reply_markup=markup)
+    try:
+        if post['type'] == 'text':
+            bot.send_message(CHANNEL_NAME, post['text'], reply_markup=markup)
+        elif post['type'] == 'image':
+            if len(post['images']) > 1:
+                media = [types.InputMediaPhoto(open(img, 'rb'), caption=(post['text'] if i == 0 else "")) for i, img in enumerate(post['images'])]
+                bot.send_media_group(CHANNEL_NAME, media)
+            else:
+                with open(post['images'][0], 'rb') as photo:
+                    bot.send_photo(CHANNEL_NAME, photo, caption=post.get('text', ''), reply_markup=markup)
+        elif post['type'] == 'video':
+            with open(post['video'], 'rb') as video:
+                bot.send_video_note(CHANNEL_NAME, video)
+                bot.send_message(CHANNEL_NAME, "НАПИШИ МНЕ \U0001F44B", reply_markup=markup)
+        elif post['type'] == 'audio':
+            with open(post['audio'], 'rb') as audio:
+                bot.send_audio(CHANNEL_NAME, audio, reply_markup=markup)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 # Налаштовуємо графік відправлення
 def send_poll():
